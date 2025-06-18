@@ -1,0 +1,12 @@
+Package: MSCCT
+Title: Multiple Survival Crossing Curves Tests
+Version: 1.0.0
+Authors@R: 
+    person("Hugo", "MINA PASSI", , "Hugo_Mina-Passi@etu.u-bourgogne.fr", role = c("aut", "cre"))
+Description: Comparison of two or more survival curves whether the proportional hazards
+    hypothesis is verified or not.
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
