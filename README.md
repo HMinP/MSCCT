@@ -17,19 +17,6 @@ You can install the development version of MSCCT from
 
 ``` r
 devtools::install_github("https://github.com/HMinP/MSCCT")
-#> Using GitHub PAT from the git credential store.
-#> Downloading GitHub repo HMinP/MSCCT@HEAD
-#> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>          checking for file 'C:\Users\hm428023\AppData\Local\Temp\RtmpGMBK7G\remotes3b9023ad4f74\HMinP-MSCCT-f875102/DESCRIPTION' ...     checking for file 'C:\Users\hm428023\AppData\Local\Temp\RtmpGMBK7G\remotes3b9023ad4f74\HMinP-MSCCT-f875102/DESCRIPTION' ...   ✔  checking for file 'C:\Users\hm428023\AppData\Local\Temp\RtmpGMBK7G\remotes3b9023ad4f74\HMinP-MSCCT-f875102/DESCRIPTION' (691ms)
-#>       ─  preparing 'MSCCT':
-#>    checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...   ✔  checking DESCRIPTION meta-information
-#>       ─  checking for LF line-endings in source and make files and shell scripts
-#>   ─  checking for empty or unneeded directories
-#>       ─  building 'MSCCT_1.0.0.tar.gz'
-#>      
-#> 
-#> Installation du package dans 'C:/Users/hm428023/AppData/Local/Temp/RtmpKwntAe/temp_libpath357425e42ab5'
-#> (car 'lib' n'est pas spécifié)
 ```
 
 ## Example
@@ -51,6 +38,7 @@ weights you want.
 ``` r
 multiLR(data_under_PH)
 #> (Multiple) Weighted log-rank test 
+#> 
 #> Weighting : Classic log-rank test 
 #> Degrees of freedom : 2 
 #> 
@@ -61,7 +49,9 @@ multiLR(data_under_PH)
 ``` r
 multiLR(data_under_PH, weights=numeric(), test="fh", rho=1, gamma=0)
 #> (Multiple) Weighted log-rank test 
+#> 
 #> Weighting : Flemming-Harrington test 
+#> Parameters : rho = 1 , gamma =  0 
 #> Degrees of freedom : 2 
 #> 
 #>        Statistic            p

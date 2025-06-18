@@ -26,7 +26,7 @@ curves cross each other.
 
 You can install the development version of MSCCT from [GitHub](https://github.com/) with:
 
-``` {r}
+``` {r eval=FALSE}
 devtools::install_github("https://github.com/HMinP/MSCCT")
 ```
 
