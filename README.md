@@ -6,6 +6,8 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+Multiple Survival Crossing Curves Tests
+
 This package contains tests for comparison or two or more survival
 curves when the proportional hazards hypothesis is not verified, in
 particular when the survival curves cross each other.
@@ -72,9 +74,9 @@ multirmst(data_under_PH, tau=12)
 #> Correction : bonferroni 
 #> 
 #>            dRMST        sd            p   p adjusted
-#> 0 VS 1 -1.518564 0.3919589 1.069344e-04 3.208033e-04
-#> 0 VS 2 -2.621846 0.4185860 3.762464e-10 1.128739e-09
-#> 1 VS 2 -1.103282 0.4461470 1.340176e-02 4.020527e-02
+#> 0 VS 1 -1.518564 0.3846360 7.878906e-05 2.363672e-04
+#> 0 VS 2 -2.621846 0.4048325 9.395440e-11 2.818632e-10
+#> 1 VS 2 -1.103282 0.4596628 1.638620e-02 4.915859e-02
 #>  
-#> p=1.128739e-09
+#> p=2.818632e-10
 ```

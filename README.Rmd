@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
+Multiple Survival Crossing Curves Tests
+
 This package contains tests for comparison or two or more survival curves when the
 proportional hazards hypothesis is not verified, in particular when the survival
 curves cross each other.
