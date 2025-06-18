@@ -1,0 +1,69 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# MSCCT
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This package contains tests for comparison or two or more survival
+curves when the proportional hazards hypothesis is not verified, in
+particular when the survival curves cross each other.
+
+## Installation
+
+You can install the development version of MSCCT from
+[GitHub](https://github.com/) with:
+
+``` r
+devtools::install_github("https://github.com/HMinP/MSCCT")
+#> Using GitHub PAT from the git credential store.
+#> Downloading GitHub repo HMinP/MSCCT@HEAD
+#> ── R CMD build ─────────────────────────────────────────────────────────────────
+#>          checking for file 'C:\Users\hm428023\AppData\Local\Temp\RtmpGMBK7G\remotes3b9023ad4f74\HMinP-MSCCT-f875102/DESCRIPTION' ...     checking for file 'C:\Users\hm428023\AppData\Local\Temp\RtmpGMBK7G\remotes3b9023ad4f74\HMinP-MSCCT-f875102/DESCRIPTION' ...   ✔  checking for file 'C:\Users\hm428023\AppData\Local\Temp\RtmpGMBK7G\remotes3b9023ad4f74\HMinP-MSCCT-f875102/DESCRIPTION' (691ms)
+#>       ─  preparing 'MSCCT':
+#>    checking DESCRIPTION meta-information ...     checking DESCRIPTION meta-information ...   ✔  checking DESCRIPTION meta-information
+#>       ─  checking for LF line-endings in source and make files and shell scripts
+#>   ─  checking for empty or unneeded directories
+#>       ─  building 'MSCCT_1.0.0.tar.gz'
+#>      
+#> 
+#> Installation du package dans 'C:/Users/hm428023/AppData/Local/Temp/RtmpKwntAe/temp_libpath357425e42ab5'
+#> (car 'lib' n'est pas spécifié)
+```
+
+## Example
+
+``` r
+library(MSCCT)
+```
+
+This package contains:
+
+- The weighted log-rank test
+
+Compares for each group and for each time of event the expected and the
+observed number of events. The weighted log-rank adds weights to each
+time of event. Some (implemented) exemples are the Flemming-Harrington
+test and the Gehan-Wilcoxon test. It is also possible to chose the
+weights you want.
+
+``` r
+multiLR(data_under_PH)
+#> (Multiple) Weighted log-rank test 
+#> Weighting : Classic log-rank test 
+#> Degrees of freedom : 2 
+#> 
+#>        Statistic p
+#> Test 1  80.17764 0
+```
+
+``` r
+multiLR(data_under_PH, weights=numeric(), test="fh", rho=1, gamma=0)
+#> (Multiple) Weighted log-rank test 
+#> Weighting : Flemming-Harrington test 
+#> Degrees of freedom : 2 
+#> 
+#>        Statistic            p
+#> Test 1  71.47735 3.330669e-16
+```
