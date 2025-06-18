@@ -41,7 +41,7 @@ This package contains:
 
 - The weighted log-rank test
 
-Compares for each group and for each time of event the expected and the observed number
+The log-rank test compares for each group and for each time of event the expected and the observed number
 of events. The weighted log-rank adds weights to each time of event. Some (implemented)
 exemples are the Flemming-Harrington test and the Gehan-Wilcoxon test.  It is also possible to chose
 the weights you want.
@@ -54,6 +54,15 @@ multiLR(data_under_PH)
 multiLR(data_under_PH, weights=numeric(), test="fh", rho=1, gamma=0)
 ```
 
+- The Restricted Mean Survival Test
+
+The Restricted Mean Survival Time at time $\tau$ is the area under a survival curve
+up to time $\tau$. The RMST test compares the areas under the survival curves and
+tests the equality to zero of the difference of RMST.
+
+```{r}
+multirmst(data_under_PH, tau=12)
+```
 
 
 
