@@ -5,8 +5,17 @@ Authors@R:
     person("Hugo", "MINA PASSI", , "Hugo_Mina-Passi@etu.u-bourgogne.fr", role = c("aut", "cre"))
 Description: Comparison of two or more survival curves whether the proportional hazards
     hypothesis is verified or not.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Depends: 
+    R (>= 3.5)
+LazyData: true
+Imports: 
+    boot,
+    stats,
+    survival
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

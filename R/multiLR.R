@@ -1,0 +1,147 @@
+#' (Weighted) Log-rank test for comparison of two or more survival curves.
+#'
+#' Performs a global log-rank test for comparing two or more survival curves.
+#'
+#' For the log-rank test, all the weights are equal to one. Gehan-Wilcoxon uses the
+#' number of patients still at risk as weights. For the Flemming-Harrington test,
+#' the weights are S(t)^rho * (1-S(t))^gamma where S is the global survival function.
+#'
+#' If `weights` is a vector, performs one log-rank test with the given weights.
+#' Weights are given in the same order as time of event : the first weight correspond
+#' to the earliest time of event, and so on. Throws an error if the number of given
+#' weights is not equal to the number of distinct time of events. Returns the test
+#' statistic and the p-value.
+#'
+#' If `weights` is a matrix (or a two-dimensional object), each columns correspond to
+#' a set of weights. Throws an error if the number of `nrow(weights)` is not equal to
+#' the number of distinct time of events. Returns `ncol(weights)` test statistics and
+#' the corresponding p-value.
+#'
+#' @param df A dataframe with columns :
+#'   * `time` : positive numbers, time-to-event;
+#'   * `status` : integer of factor. 0 is (right) censoring, 1 is event;
+#'   * `arm` : A vector or something that can be transformed into one.
+#'     The group the patient belongs to.
+#' @param weights An object that can be transformed into a matrix. The weights
+#'   used for the tests. Default is vector of ones, corresponding to
+#'   the usual log-rank test (see Details);
+#' @param test If weights is not given, specifies the test to perform. Possible values are
+#'   `lr` for log-rank, `gw` for Gehan-Wilcoxon, and `fh` for Flemming-Harrington;
+#' @param rho,gamma The parameters for Flemming-Harrington test.
+#'
+#' @return An object of class `multiLR` containing:
+#'   * `U` : Statistics of tests;
+#'   * `p` : The corresponding p-values;
+#'   * `df` : Degrees of freedom of the statistics of tests;
+#'   * `test` : The performed test.
+#'
+#' @export
+#'
+#' @examples
+#' # Log-rank test
+#' multiLR(data_not_PH)
+#'
+#' # Gehan-Wilcoxon test
+#' multiLR(data_not_PH)
+#'
+#' # It is possible to run several tests with different weights at a time
+#' evt_time = unique(data_not_PH$time[data_not_PH$status == 1])
+#' nb_evt_time = length(evt_time)
+#' weights = matrix(runif(nb_evt_time*3), ncol=3)
+#' multiLR(data_not_PH, weights=weights)
+multiLR = function(df, weights=numeric(), test="lr", rho=0, gamma=0){
+  if (!all(c("time", "status", "arm") %in% colnames(df))){
+    stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
+  }
+  
+  df$status = as.numeric(df$status)
+  df$status = df$status - min(df$status)
+  if (!all(df$status %in% c(0,1))){stop("'status' must be either 0 or 1.")}
+  
+  df$arm = as.factor(df$arm)
+  nb_arms = nlevels(df$arm)
+  if (nb_arms < 2){stop("Needs at least two groups.")}
+  
+  time = df$time
+  status = df$status
+  arm = df$arm
+  
+  evt_time = unique(time[status == 1])
+  evt_time_ordered = sort(evt_time)
+  
+  Y = matrix(0, nrow=nb_arms, ncol=length(evt_time_ordered))
+  D = matrix(0, nrow=nb_arms, ncol=length(evt_time_ordered))
+  for (i in 1:length(evt_time_ordered)){
+    t = evt_time_ordered[i]
+    index = time >= t
+    M = table(arm[index], time[index] == t)
+    D[,i] = M[,"TRUE"]
+    Y[,i] = apply(M, 1, sum)
+  }
+  d_total = apply(D, 2, sum)
+  y_total = apply(Y, 2, sum)
+  D = D[1:(nb_arms-1), , drop=FALSE]
+  Y = Y[1:(nb_arms-1), , drop=FALSE]
+  
+  
+  if (length(weights) == 0) {
+    if (test == "lr"){weights = matrix(1, nrow=length(evt_time_ordered), ncol=1)}
+    else if (test == "gw"){weights = matrix(y_total, ncol=1)}
+    else if (test == "fh"){
+      KM = survival::survfit(Surv(time,status)~1)
+      S = stats::stepfun(KM$time, c(1,KM$surv), right=FALSE)
+      weights = matrix(S(evt_time_ordered)^rho * (1-S(evt_time_ordered))^gamma, ncol=1)
+    }
+    else {stop("Incorrect argument for 'test'")}
+  } else {
+    weights = as.matrix(weights)
+    if (nrow(weights) != length(evt_time_ordered)) {
+      stop(sprintf("Expected %d weights, got %d", length(evt_time_ordered), nrow(weights)))
+    }
+    test = "chosen"
+  }
+  
+  E = Y %*% diag(d_total/y_total)
+  V = (D-E) %*% weights
+  
+  sigma = as.list(rep(0,length.out=ncol(weights)))
+  coef = t(weights^2) %*% diag(d_total * (y_total-d_total) / (y_total^2 * (y_total-1)))
+  for (i in 1:length(evt_time_ordered)){
+    Y_i = matrix(Y[,i], ncol=1)
+    M_i = y_total[i] * diag(Y[,i], nrow=length(Y[,i])) - Y_i %*% t(Y_i)
+    M_ji = lapply(coef[,i], "*", M_i)
+    sigma = lapply(seq_along(sigma), function(j){sigma[[j]] + M_ji[[j]]})
+  }
+  
+  U = lapply(seq_along(sigma), function(j){t(V[,j]) %*% solve(sigma[[j]], V[,j])})
+  U = as.numeric(U)
+  p = 1 - pchisq(U,nb_arms-1)
+  
+  z = list(U=U, p=p, df=nb_arms-1, test=test)
+  class(z) = "multiLR"
+  return(z)
+}
+
+#' Print method for the multiple log-rank test
+#'
+#' @param x An object of class `multiLR` as returned by [multiLR()];
+#' @param ... For compatibility with the `print` method, unused and to be ignored.
+#'
+#' @export
+print.multiLR = function(x, ...){
+  cat("(Multiple) Weighted log-rank test \n")
+  cat("Weighting : ")
+  if (x$test == "chosen"){cat("Specified weighted \n")}
+  else if (x$test == "lr"){cat("Classic log-rank test \n")}
+  else if (x$test == "gw"){cat("Gehan-Wilcoxon test \n")}
+  else if (x$test == "fh"){cat("Flemming-Harrington test \n")}
+  cat("Degrees of freedom :", x$df, "\n\n")
+  M = matrix(c(x$U, x$p), ncol=2, byrow=FALSE)
+  labs = rep(NA, length(x$U))
+  for (i in 1:length(labs)){labs[i] = paste("Test", i)}
+  rownames(M) = labs
+  colnames(M) = c("Statistic", "p")
+  print(M)
+}
+
+
