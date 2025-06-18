@@ -59,7 +59,7 @@ multirmst = function(df, tau=-1, nboot=500, method="bonferroni"){
   nb_tests = nb_arms*(nb_arms-1) / 2
   label_test = rep(NA,nb_tests)
   results = matrix(NA,nrow=nb_tests,ncol=4)
-  k=1
+  k = 1
   
   for (i in 0:(nb_arms-2)){
     for (j in (i+1):(nb_arms-1)){
