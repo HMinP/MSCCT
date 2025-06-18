@@ -4,7 +4,7 @@
 \alias{multiLR}
 \title{(Weighted) Log-rank test for comparison of two or more survival curves.}
 \usage{
-multiLR(df, weights = numeric(), test = "lr", rho = 0, gamma = 0)
+multiLR(df, weights = numeric(), test = "lr", rho = 1, gamma = 0)
 }
 \arguments{
 \item{df}{A dataframe with columns :
@@ -22,7 +22,8 @@ the usual log-rank test (see Details);}
 \item{test}{If weights is not given, specifies the test to perform. Possible values are
 \code{lr} for log-rank, \code{gw} for Gehan-Wilcoxon, and \code{fh} for Flemming-Harrington;}
 
-\item{rho, gamma}{The parameters for Flemming-Harrington test.}
+\item{rho, gamma}{The parameters for Flemming-Harrington test. Default is (rho,gamma)=(1,0),
+which is also called the Peto-Peto test.}
 }
 \value{
 An object of class \code{multiLR} containing:

@@ -27,7 +27,8 @@
 #'   the usual log-rank test (see Details);
 #' @param test If weights is not given, specifies the test to perform. Possible values are
 #'   `lr` for log-rank, `gw` for Gehan-Wilcoxon, and `fh` for Flemming-Harrington;
-#' @param rho,gamma The parameters for Flemming-Harrington test.
+#' @param rho,gamma The parameters for Flemming-Harrington test. Default is (rho,gamma)=(1,0),
+#'   which is also called the Peto-Peto test.
 #'
 #' @return An object of class `multiLR` containing:
 #'   * `U` : Statistics of tests;
@@ -49,7 +50,7 @@
 #' nb_evt_time = length(evt_time)
 #' weights = matrix(runif(nb_evt_time*3), ncol=3)
 #' multiLR(data_not_PH, weights=weights)
-multiLR = function(df, weights=numeric(), test="lr", rho=0, gamma=0){
+multiLR = function(df, weights=numeric(), test="lr", rho=1, gamma=0){
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }
@@ -117,7 +118,7 @@ multiLR = function(df, weights=numeric(), test="lr", rho=0, gamma=0){
   U = as.numeric(U)
   p = 1 - pchisq(U,nb_arms-1)
   
-  z = list(U=U, p=p, df=nb_arms-1, test=test)
+  z = list(U=U, p=p, df=nb_arms-1, test=test, rho=rho, gamma=gamma)
   class(z) = "multiLR"
   return(z)
 }
@@ -129,12 +130,14 @@ multiLR = function(df, weights=numeric(), test="lr", rho=0, gamma=0){
 #'
 #' @export
 print.multiLR = function(x, ...){
-  cat("(Multiple) Weighted log-rank test \n")
+  cat("(Multiple) Weighted log-rank test \n\n")
   cat("Weighting : ")
   if (x$test == "chosen"){cat("Specified weighted \n")}
   else if (x$test == "lr"){cat("Classic log-rank test \n")}
   else if (x$test == "gw"){cat("Gehan-Wilcoxon test \n")}
-  else if (x$test == "fh"){cat("Flemming-Harrington test \n")}
+  else if (x$test == "fh"){
+    cat("Flemming-Harrington test \n")
+    cat("Parameters : rho =", x$rho, ", gamma = ", x$gamma, "\n")}
   cat("Degrees of freedom :", x$df, "\n\n")
   M = matrix(c(x$U, x$p), ncol=2, byrow=FALSE)
   labs = rep(NA, length(x$U))
