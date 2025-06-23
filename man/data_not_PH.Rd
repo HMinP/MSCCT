@@ -9,7 +9,7 @@
 
 A data frame with 600 rows and 3 columns:
 \describe{
-\item{time}{The time of events}
+\item{time}{Time of events in months with truncation at 60 months}
 \item{status}{Indicator of censorship. 1 denotes an event, 0 denotes a censor}
 \item{arm}{Integer from 0 to 2. Indicates the group the patient belongs to}
 }
