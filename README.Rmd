@@ -49,11 +49,11 @@ exemples are the Flemming-Harrington test and the Gehan-Wilcoxon test.  It is al
 the weights you want.
 
 ```{r}
-multiLR(data_under_PH)
+multi_lr(data_under_PH)
 ```
 
 ```{r}
-multiLR(data_under_PH, weights=numeric(), test="fh", rho=1, gamma=0)
+multi_lr(data_under_PH, weights=numeric(), test="fh", rho=1, gamma=0)
 ```
 
 - The Restricted Mean Survival Test
@@ -63,7 +63,7 @@ up to time $\tau$. The RMST test compares the areas under the survival curves an
 tests the equality to zero of the difference of RMST.
 
 ```{r}
-multirmst(data_under_PH, tau=12, nboot=100, method="bonferroni")
+multi_rmst(data_under_PH, tau=12, nboot=100, method="bonferroni")
 ```
 
 
@@ -76,7 +76,7 @@ In order to differentiate these cases, a second test is performed. This second t
 a weighted log-rank test with weights that allows to differentiate the two previous cases.
 
 ```{r}
-multiTS(data_under_PH, eps=0.1, nboot=100, method="BH")
+multi_ts(data_under_PH, eps=0.1, nboot=100, method="BH")
 ```
 
 

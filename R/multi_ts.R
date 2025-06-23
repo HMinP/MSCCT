@@ -18,7 +18,7 @@
 #' @param nboot A positive integer, number of bootstrap sample for the second stage;
 #' @param method The correction used for the p-values. Must be in [p.adjust.methods]. Unused for exactly two groups;
 #'
-#' @return An object of class `multiTS` containing:
+#' @return An object of class `multi_ts` containing:
 #'   * `results` : A matrix. Each row represents a comparison of two curves and contains
 #'     the p-values for both stage, the global p-value and the adjusted global p-value;
 #'   * `p` : The global p-value for the global test;
@@ -35,8 +35,8 @@
 #' @export
 #'
 #' @examples
-#' multiTS(data_not_PH, eps=0.05, nboot=200, method="BH")
-multiTS = function(df, eps=0.1, nboot=500, method="bonferroni"){
+#' multi_ts(data_not_PH, eps=0.05, nboot=200, method="BH")
+multi_ts = function(df, eps=0.1, nboot=500, method="bonferroni"){
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }
@@ -67,7 +67,7 @@ multiTS = function(df, eps=0.1, nboot=500, method="bonferroni"){
       df_ij = df[ind,]
       df_ij$arm = (df_ij$arm - i) / (j-i)
       
-      test1 = multiLR(df_ij)
+      test1 = multi_lr(df_ij)
       U = test1$U
       p1 = test1$p
       V = boot::boot(df_ij, calcul_V, nboot, eps=eps)
@@ -97,18 +97,18 @@ multiTS = function(df, eps=0.1, nboot=500, method="bonferroni"){
   
   
   z = list(results=results, p=p, nb_tests=nb_tests, eps=eps, method=method, nboot=nboot)
-  class(z) = "multiTS"
+  class(z) = "multi_ts"
   return(z)
 }
 
 
 #' Print method for the multiple Two-Stage test
 #'
-#' @param x An object of class `multiTS` as returned by [multiTS()];
+#' @param x An object of class `multi_ts` as returned by [multi_ts()];
 #' @param ... For compatibility with the `print` method, unused and to be ignored.
 #'
 #' @export
-print.multiTS = function(x, ...){
+print.multi_ts = function(x, ...){
   nb_tests = x$nb_tests
   
   cat("(Multiple) Two-Staged test \n")
@@ -180,7 +180,7 @@ calcul_V = function(df, ind=numeric(), eps=0.1){
   De = floor(D*eps)
   weights = poids_S2(df_shuffled)
   
-  V_vect = multiLR(df_shuffled, weights=weights[,De:(D-De)])$U
+  V_vect = multi_lr(df_shuffled, weights=weights[,De:(D-De)])$U
   V = max(as.numeric(V_vect))
   
   return(V)

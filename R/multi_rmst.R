@@ -21,7 +21,7 @@
 #' @param nboot Number of bootstrap samples;
 #' @param method The correction used for the p-values. Must be in [p.adjust.methods]. Unused for exactly two groups.
 #'
-#' @return an object of class `multirmst` containing :
+#' @return an object of class `multi_rmst` containing :
 #'   * `results` A matrix. Each row represents a comparison of two curves and contains the difference
 #'     of RMST, its standard deviation, the p-value and the adjusted p-value;
 #'   * `p` The p-value of the global test;
@@ -33,11 +33,11 @@
 #'     trials with a time-to-event outcome. BMC medical research methodology, 13, 1-15.
 #'
 #' @examples
-#' multirmst(data_under_PH, 36)
-#' multirmst(data_not_PH, tau=36, method="BH", nboot=1000)
+#' multi_rmst(data_under_PH, 36)
+#' multi_rmst(data_not_PH, tau=36, method="BH", nboot=1000)
 #'
 #' @export
-multirmst = function(df, tau=-1, nboot=500, method="bonferroni"){
+multi_rmst = function(df, tau=-1, nboot=500, method="bonferroni"){
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }
@@ -93,7 +93,7 @@ multirmst = function(df, tau=-1, nboot=500, method="bonferroni"){
   
   z = list(results=results, tau=tau, p=p, nb_tests=nb_tests,
            method=method, nboot=nboot)
-  class(z) = "multirmst"
+  class(z) = "multi_rmst"
   return(z)
 }
 
@@ -102,11 +102,11 @@ multirmst = function(df, tau=-1, nboot=500, method="bonferroni"){
 
 #' Print method for the multiple test of RMST
 #'
-#' @param x An object of class `multirmst` as returned by [multirmst()];
+#' @param x An object of class `multi_rmst` as returned by [multi_rmst()];
 #' @param ... For compatibility with the `print` method, unused and to be ignored.
 #'
 #' @export
-print.multirmst = function(x, ...){
+print.multi_rmst = function(x, ...){
   nb_tests=x$nb_tests
   
   cat("(Multiple) test of RMST \n")
