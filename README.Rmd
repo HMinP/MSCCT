@@ -63,11 +63,21 @@ up to time $\tau$. The RMST test compares the areas under the survival curves an
 tests the equality to zero of the difference of RMST.
 
 ```{r}
-multirmst(data_under_PH, tau=12)
+multirmst(data_under_PH, tau=12, nboot=100, method="bonferroni")
 ```
 
 
+- The Two-stage test
 
+The two-stage test is a combination of two tests. The first one is a classic log-rank test.
+When the log-rank test is not significant, this means that the survival curves are
+either different or they cross each other and the log-rank is not powerful enough.
+In order to differentiate these cases, a second test is performed. This second test is
+a weighted log-rank test with weights that allows to differentiate the two previous cases.
+
+```{r}
+multiTS(data_under_PH, eps=0.1, nboot=100, method="BH")
+```
 
 
 
