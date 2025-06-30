@@ -35,7 +35,7 @@
 #' @export
 #'
 #' @examples
-#' multi_ts(data_not_PH, eps=0.05, nboot=200, method="BH")
+#' multi_ts(data_not_PH, eps=0.05, nboot=100, method="BH")
 multi_ts = function(df, eps=0.1, nboot=500, method="bonferroni"){
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
