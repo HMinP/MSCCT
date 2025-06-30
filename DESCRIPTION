@@ -1,6 +1,6 @@
 Package: MSCCT
 Title: Multiple Survival Crossing Curves Tests
-Version: 1.0.0
+Version: 0.0.9000
 Authors@R: 
     person("Hugo", "MINA PASSI", , "Hugo_Mina-Passi@etu.u-bourgogne.fr", role = c("aut", "cre"))
 Description: Comparison of two or more survival curves whether the proportional hazards
