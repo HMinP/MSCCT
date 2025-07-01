@@ -11,6 +11,8 @@
 #' For exactly two groups, a single test is performed. For more than two survival curves,
 #' it compares each survival curve to every other curves and tests the global null
 #' hypothesis "all curves are equal" against the hypothesis "the curves are not all equal".
+#' 
+#' @usage multi_rmst(df, tau = -1, nboot = 500, method = p.adjust.methods)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
@@ -37,7 +39,9 @@
 #' multi_rmst(data_not_PH, tau=36, method="BH", nboot=1000)
 #'
 #' @export
-multi_rmst = function(df, tau=-1, nboot=500, method="bonferroni"){
+multi_rmst = function(df, tau=-1, nboot=500, method=p.adjust.methods){
+  method = match.arg(method)
+  
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }

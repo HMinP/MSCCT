@@ -4,7 +4,7 @@
 \alias{multi_lr}
 \title{(Weighted) Log-rank test for comparison of two or more survival curves.}
 \usage{
-multi_lr(df, weights = numeric(), test = "lr", rho = 1, gamma = 0)
+multi_lr(df, weights = numeric(), test = c("lr", "gw", "fh"), rho = 1, gamma = 0)
 }
 \arguments{
 \item{df}{A dataframe with columns :
@@ -58,7 +58,7 @@ the corresponding p-value.
 multi_lr(data_not_PH)
 
 # Gehan-Wilcoxon test
-multi_lr(data_not_PH)
+multi_lr(data_not_PH, test="gw")
 
 # It is possible to run several tests with different weights at a time
 evt_time = unique(data_not_PH$time[data_not_PH$status == 1])

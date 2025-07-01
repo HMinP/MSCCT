@@ -4,7 +4,7 @@
 \alias{multi_rmst}
 \title{Test of RMST for comparing two or more survival curves}
 \usage{
-multi_rmst(df, tau = -1, nboot = 500, method = "bonferroni")
+multi_rmst(df, tau = -1, nboot = 500, method = p.adjust.methods)
 }
 \arguments{
 \item{df}{A dataframe with columns :

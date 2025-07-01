@@ -16,6 +16,8 @@
 #' a set of weights. Throws an error if the number of `nrow(weights)` is not equal to
 #' the number of distinct time of events. Returns `ncol(weights)` test statistics and
 #' the corresponding p-value.
+#' 
+#' @usage multi_lr(df, weights = numeric(), test = c("lr", "gw", "fh"), rho = 1, gamma = 0)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
@@ -43,14 +45,16 @@
 #' multi_lr(data_not_PH)
 #'
 #' # Gehan-Wilcoxon test
-#' multi_lr(data_not_PH)
+#' multi_lr(data_not_PH, test="gw")
 #'
 #' # It is possible to run several tests with different weights at a time
 #' evt_time = unique(data_not_PH$time[data_not_PH$status == 1])
 #' nb_evt_time = length(evt_time)
 #' weights = matrix(runif(nb_evt_time*3), ncol=3)
 #' multi_lr(data_not_PH, weights=weights)
-multi_lr = function(df, weights=numeric(), test="lr", rho=1, gamma=0){
+multi_lr = function(df, weights=numeric(), test=c("lr", "gw", "fh"), rho=1, gamma=0){
+  test = match.arg(test)
+  
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }

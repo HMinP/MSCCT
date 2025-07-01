@@ -8,6 +8,8 @@
 #' significant, then the survival curves are either equal or crossing each other and
 #' the log-rank test can't conclude the difference. A second test is performed to distinguish
 #' these two cases.
+#' 
+#' @usage multi_ts(df, eps = 0.1, nboot = 100, method = p.adjust.methods)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
@@ -36,7 +38,9 @@
 #'
 #' @examples
 #' multi_ts(data_not_PH, eps=0.05, nboot=100, method="BH")
-multi_ts = function(df, eps=0.1, nboot=500, method="bonferroni"){
+multi_ts = function(df, eps=0.1, nboot=100, method=p.adjust.methods){
+  method = match.arg(method)
+  
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }
