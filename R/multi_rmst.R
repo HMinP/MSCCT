@@ -12,7 +12,7 @@
 #' it compares each survival curve to every other curves and tests the global null
 #' hypothesis "all curves are equal" against the hypothesis "the curves are not all equal".
 #' 
-#' @usage multi_rmst(df, tau = -1, nboot = 500, method = p.adjust.methods)
+#' @usage multi_rmst(df, tau = -1, method = p.adjust.methods, nboot = 500)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
@@ -35,12 +35,15 @@
 #'     trials with a time-to-event outcome. BMC medical research methodology, 13, 1-15.
 #'
 #' @examples
-#' multi_rmst(data_under_PH, 36)
-#' multi_rmst(data_not_PH, tau=36, method="BH", nboot=1000)
+#' multi_rmst(data_under_PH, tau = 36)
+#' multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 1000)
 #'
 #' @export
-multi_rmst = function(df, tau=-1, nboot=500, method=p.adjust.methods){
-  method = match.arg(method)
+multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
+  if (length(method) != 1){method = "bonferroni"}
+  i = which(stats::p.adjust.methods == "bonferroni")
+  choices = c(stats::p.adjust.methods[i], stats::p.adjust.methods[-i])
+  method = match.arg(method, choices)
   
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")

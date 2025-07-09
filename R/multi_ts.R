@@ -9,7 +9,7 @@
 #' the log-rank test can't conclude the difference. A second test is performed to distinguish
 #' these two cases.
 #' 
-#' @usage multi_ts(df, eps = 0.1, nboot = 100, method = p.adjust.methods)
+#' @usage multi_ts(df, method = p.adjust.methods, eps = 0.1, nboot = 100)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
@@ -37,9 +37,12 @@
 #' @export
 #'
 #' @examples
-#' multi_ts(data_not_PH, eps=0.05, nboot=100, method="BH")
-multi_ts = function(df, eps=0.1, nboot=100, method=p.adjust.methods){
-  method = match.arg(method)
+#' multi_ts(data_not_PH, eps = 0.1, nboot = 100, method = "BH")
+multi_ts = function(df, method = p.adjust.methods, eps = 0.1, nboot = 100){
+  if (length(method) != 1){method = "bonferroni"}
+  i = which(stats::p.adjust.methods == "bonferroni")
+  choices = c(stats::p.adjust.methods[i], stats::p.adjust.methods[-i])
+  method = match.arg(method, choices)
   
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
