@@ -12,12 +12,12 @@
 #' it compares each survival curve to every other curves and tests the global null
 #' hypothesis "all curves are equal" against the hypothesis "the curves are not all equal".
 #' 
-#' @usage multi_rmst(df, tau = -1, nboot = 500, method = p.adjust.methods)
+#' @usage multi_rmst(df, tau = -1, method = p.adjust.methods, nboot = 500)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
 #'   * `status` : integer of factor. 0 is (right) censoring, 1 is event;
-#'   * `arm` : integers from 0 to n-1 or factor with at least 2 levels.
+#'   * `arm` : integers or factor with at least 2 levels.
 #'     The group the patient belongs to.
 #' @param tau The truncation time, default is the lowest max(time) of each groups;
 #' @param nboot Number of bootstrap samples;
@@ -35,12 +35,15 @@
 #'     trials with a time-to-event outcome. BMC medical research methodology, 13, 1-15.
 #'
 #' @examples
-#' multi_rmst(data_under_PH, 36)
-#' multi_rmst(data_not_PH, tau=36, method="BH", nboot=1000)
+#' multi_rmst(data_under_PH, tau = 36)
+#' multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 1000)
 #'
 #' @export
-multi_rmst = function(df, tau=-1, nboot=500, method=p.adjust.methods){
-  method = match.arg(method)
+multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
+  if (length(method) != 1){method = "bonferroni"}
+  i = which(stats::p.adjust.methods == "bonferroni")
+  choices = c(stats::p.adjust.methods[i], stats::p.adjust.methods[-i])
+  method = match.arg(method, choices)
   
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
@@ -50,13 +53,11 @@ multi_rmst = function(df, tau=-1, nboot=500, method=p.adjust.methods){
   df$status = df$status - min(df$status)
   if (!all(df$status %in% c(0,1))){stop("'status' must be either 0 or 1.")}
   
-  df$arm = as.numeric(df$arm)
-  df$arm = df$arm - min(df$arm)
-  nb_arms = length(unique(df$arm))
+  df$arm = as.factor(df$arm)
+  lev = levels(df$arm)
+  df$arm = as.numeric(df$arm) - 1
+  nb_arms = length(lev)
   if (nb_arms < 2){stop("Need at least two groups.")}
-  if (!setequal(df$arm,0:(nb_arms-1))){
-    stop(paste("Incorrect value for 'arm', must range from 0 to ",nb_arms-1, ".", sep=""))
-  }
   
   if (tau == -1){tau = min(tapply(X=df$time, INDEX=df$arm, FUN=max))}
   
@@ -67,7 +68,7 @@ multi_rmst = function(df, tau=-1, nboot=500, method=p.adjust.methods){
   
   for (i in 0:(nb_arms-2)){
     for (j in (i+1):(nb_arms-1)){
-      label_test[k] = paste(i,"VS",j)
+      label_test[k] = paste(lev[i+1], "VS", lev [j+1])
       
       ind = (df$arm == i) | (df$arm == j)
       df_ij = df[ind,]

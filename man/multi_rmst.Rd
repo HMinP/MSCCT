@@ -4,22 +4,22 @@
 \alias{multi_rmst}
 \title{Test of RMST for comparing two or more survival curves}
 \usage{
-multi_rmst(df, tau = -1, nboot = 500, method = p.adjust.methods)
+multi_rmst(df, tau = -1, method = p.adjust.methods, nboot = 500)
 }
 \arguments{
 \item{df}{A dataframe with columns :
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
 \item \code{status} : integer of factor. 0 is (right) censoring, 1 is event;
-\item \code{arm} : integers from 0 to n-1 or factor with at least 2 levels.
+\item \code{arm} : integers or factor with at least 2 levels.
 The group the patient belongs to.
 }}
 
 \item{tau}{The truncation time, default is the lowest max(time) of each groups;}
 
-\item{nboot}{Number of bootstrap samples;}
-
 \item{method}{The correction used for the p-values. Must be in \link{p.adjust.methods}. Unused for exactly two groups.}
+
+\item{nboot}{Number of bootstrap samples;}
 }
 \value{
 an object of class \code{multi_rmst} containing :
@@ -46,8 +46,8 @@ it compares each survival curve to every other curves and tests the global null
 hypothesis "all curves are equal" against the hypothesis "the curves are not all equal".
 }
 \examples{
-multi_rmst(data_under_PH, 36)
-multi_rmst(data_not_PH, tau=36, method="BH", nboot=1000)
+multi_rmst(data_under_PH, tau = 36)
+multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 1000)
 
 }
 \references{
