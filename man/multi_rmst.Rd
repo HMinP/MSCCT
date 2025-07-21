@@ -11,7 +11,7 @@ multi_rmst(df, tau = -1, method = p.adjust.methods, nboot = 500)
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
 \item \code{status} : integer of factor. 0 is (right) censoring, 1 is event;
-\item \code{arm} : integers from 0 to n-1 or factor with at least 2 levels.
+\item \code{arm} : integers or factor with at least 2 levels.
 The group the patient belongs to.
 }}
 

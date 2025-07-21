@@ -11,7 +11,7 @@ multi_ts(df, method = p.adjust.methods, eps = 0.1, nboot = 100)
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
 \item \code{status} : integer of factor. 0 is (right) censoring, 1 is event;
-\item \code{arm} : integers from 0 to n-1 or factor with at least 2 levels.
+\item \code{arm} : integer or factor with at least 2 levels.
 The group the patient belongs to.
 }}
 
@@ -43,7 +43,7 @@ the log-rank test can't conclude the difference. A second test is performed to d
 these two cases.
 }
 \examples{
-multi_ts(data_not_PH, eps = 0.1, nboot = 100, method = "BH")
+multi_ts(data_not_PH, method = "BH", eps = 0.1, nboot = 100)
 }
 \references{
 \itemize{

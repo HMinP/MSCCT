@@ -14,7 +14,7 @@
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
 #'   * `status` : integer of factor. 0 is (right) censoring, 1 is event;
-#'   * `arm` : integers from 0 to n-1 or factor with at least 2 levels.
+#'   * `arm` : integer or factor with at least 2 levels.
 #'     The group the patient belongs to.
 #' @param eps A number from 0 to 0.5. See reference for interpretation;
 #' @param nboot A positive integer, number of bootstrap sample for the second stage;
@@ -37,7 +37,7 @@
 #' @export
 #'
 #' @examples
-#' multi_ts(data_not_PH, eps = 0.1, nboot = 100, method = "BH")
+#' multi_ts(data_not_PH, method = "BH", eps = 0.1, nboot = 100)
 multi_ts = function(df, method = p.adjust.methods, eps = 0.1, nboot = 100){
   if (length(method) != 1){method = "bonferroni"}
   i = which(stats::p.adjust.methods == "bonferroni")
@@ -52,14 +52,11 @@ multi_ts = function(df, method = p.adjust.methods, eps = 0.1, nboot = 100){
   df$status = df$status - min(df$status)
   if (!all(df$status %in% c(0,1))){stop("'status' must be either 0 or 1.")}
   
-  df$arm = as.numeric(df$arm)
-  df$arm = df$arm - min(df$arm)
-  nb_arms = length(unique(df$arm))
+  df$arm = as.factor(df$arm)
+  lev = levels(df$arm)
+  df$arm = as.numeric(df$arm) - 1
+  nb_arms = length(lev)
   if (nb_arms < 2){stop("Need at least two groups.")}
-  if (!setequal(df$arm,0:(nb_arms-1))){
-    stop(paste("Incorrect value for 'arm', must range from 0 to ",nb_arms-1, ".", sep=""))
-  }
-  
   
   nb_tests = nb_arms * (nb_arms-1) / 2
   label_test = rep(NA,nb_tests)
@@ -68,7 +65,7 @@ multi_ts = function(df, method = p.adjust.methods, eps = 0.1, nboot = 100){
   
   for (i in 0:(nb_arms-2)){
     for (j in (i+1):(nb_arms-1)){
-      label_test[k] = paste(i,"VS",j)
+      label_test[k] = paste(lev[i+1], "VS", lev[j+1])
       
       ind = (df$arm == i) | (df$arm == j)
       df_ij = df[ind,]
