@@ -17,7 +17,7 @@
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
 #'   * `status` : integer of factor. 0 is (right) censoring, 1 is event;
-#'   * `arm` : integers from 0 to n-1 or factor with at least 2 levels.
+#'   * `arm` : integers or factor with at least 2 levels.
 #'     The group the patient belongs to.
 #' @param tau The truncation time, default is the lowest max(time) of each groups;
 #' @param nboot Number of bootstrap samples;
@@ -53,13 +53,11 @@ multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
   df$status = df$status - min(df$status)
   if (!all(df$status %in% c(0,1))){stop("'status' must be either 0 or 1.")}
   
-  df$arm = as.numeric(df$arm)
-  df$arm = df$arm - min(df$arm)
-  nb_arms = length(unique(df$arm))
+  df$arm = as.factor(df$arm)
+  lev = levels(df$arm)
+  df$arm = as.numeric(df$arm) - 1
+  nb_arms = length(lev)
   if (nb_arms < 2){stop("Need at least two groups.")}
-  if (!setequal(df$arm,0:(nb_arms-1))){
-    stop(paste("Incorrect value for 'arm', must range from 0 to ",nb_arms-1, ".", sep=""))
-  }
   
   if (tau == -1){tau = min(tapply(X=df$time, INDEX=df$arm, FUN=max))}
   
@@ -70,7 +68,7 @@ multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
   
   for (i in 0:(nb_arms-2)){
     for (j in (i+1):(nb_arms-1)){
-      label_test[k] = paste(i,"VS",j)
+      label_test[k] = paste(lev[i+1], "VS", lev [j+1])
       
       ind = (df$arm == i) | (df$arm == j)
       df_ij = df[ind,]
