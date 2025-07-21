@@ -43,7 +43,7 @@ the log-rank test can't conclude the difference. A second test is performed to d
 these two cases.
 }
 \examples{
-multi_ts(data_not_PH, eps = 0.05, nboot = 100, method = "BH")
+multi_ts(data_not_PH, eps = 0.1, nboot = 100, method = "BH")
 }
 \references{
 \itemize{
