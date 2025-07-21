@@ -16,9 +16,9 @@
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
-#'   * `status` : integer of factor. 0 is (right) censoring, 1 is event;
-#'   * `arm` : integers or factor with at least 2 levels.
-#'     The group the patient belongs to.
+#'   * `status` : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+#'   * `arm` : a factor or object that can be coerced to one. The group the patient 
+#'     belongs to. Must have at least two levels.
 #' @param tau The truncation time, default is the lowest max(time) of each groups;
 #' @param nboot Number of bootstrap samples;
 #' @param method The correction used for the p-values. Must be in [p.adjust.methods]. Unused for exactly two groups.
@@ -49,8 +49,6 @@ multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }
   
-  df$status = as.numeric(df$status)
-  df$status = df$status - min(df$status)
   if (!all(df$status %in% c(0,1))){stop("'status' must be either 0 or 1.")}
   
   df$arm = as.factor(df$arm)
@@ -125,18 +123,6 @@ print.multi_rmst = function(x, ...){
 
 
 
-#' Difference of RMST between two groups
-#'
-#' Computes the difference of RMST between two treatment groups, ie the difference
-#' of area under the survival curves.
-#'
-#' @param df A dataframe with columns `time`, `status` and `arm`
-#' @param ind A vector of integer for shuffling the group of patients. Used by boot
-#'   to estimate the standard deviation under null hypothesis. Default is non-shuffling.
-#' @param tau Truncation time
-#'
-#' @return The value of the difference of RMST
-#' @noRd
 rmstdiff = function(df, ind=numeric(), tau=-1){
   time = df$time
   status = df$status

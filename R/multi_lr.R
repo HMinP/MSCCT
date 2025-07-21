@@ -21,10 +21,10 @@
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
-#'   * `status` : integer of factor. 0 is (right) censoring, 1 is event;
-#'   * `arm` : A vector or something that can be transformed into one.
-#'     The group the patient belongs to.
-#' @param weights An object that can be transformed into a matrix. The weights
+#'   * `status` : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+#'   * `arm` : a factor or object that can be coerced to one. The group the patient 
+#'     belongs to. Must have at least two levels.
+#' @param weights An object that can be coerced to a matrix. The weights
 #'   used for the tests. Default is vector of ones, corresponding to
 #'   the usual log-rank test (see Details);
 #' @param test If weights is not given, specifies the test to perform. Possible values are
@@ -59,8 +59,6 @@ multi_lr = function(df, weights=numeric(), test=c("lr", "gw", "fh"), rho=1, gamm
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }
   
-  df$status = as.numeric(df$status)
-  df$status = df$status - min(df$status)
   if (!all(df$status %in% c(0,1))){stop("'status' must be either 0 or 1.")}
   
   df$arm = as.factor(df$arm)

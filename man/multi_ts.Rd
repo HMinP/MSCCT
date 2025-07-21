@@ -10,9 +10,9 @@ multi_ts(df, method = p.adjust.methods, eps = 0.1, nboot = 100)
 \item{df}{A dataframe with columns :
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
-\item \code{status} : integer of factor. 0 is (right) censoring, 1 is event;
-\item \code{arm} : integer or factor with at least 2 levels.
-The group the patient belongs to.
+\item \code{status} : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+\item \code{arm} : a factor or object that can be coerced to one. The group the patient
+belongs to. Must have at least two levels.
 }}
 
 \item{method}{The correction used for the p-values. Must be in \link{p.adjust.methods}. Unused for exactly two groups;}
@@ -43,8 +43,7 @@ the log-rank test can't conclude the difference. A second test is performed to d
 these two cases.
 }
 \examples{
-
-multi_ts(data_not_PH, eps = 0.1, nboot = 100, method = "BH")
+multi_ts(data_not_PH, method = "BH", eps = 0.1, nboot = 100)
 }
 \references{
 \itemize{

@@ -13,9 +13,9 @@
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
-#'   * `status` : integer of factor. 0 is (right) censoring, 1 is event;
-#'   * `arm` : integer or factor with at least 2 levels.
-#'     The group the patient belongs to.
+#'   * `status` : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+#'   * `arm` : a factor or object that can be coerced to one. The group the patient 
+#'     belongs to. Must have at least two levels.
 #' @param eps A number from 0 to 0.5. See reference for interpretation;
 #' @param nboot A positive integer, number of bootstrap sample for the second stage;
 #' @param method The correction used for the p-values. Must be in [p.adjust.methods]. Unused for exactly two groups;
@@ -48,8 +48,6 @@ multi_ts = function(df, method = p.adjust.methods, eps = 0.1, nboot = 100){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
   }
   
-  df$status = as.numeric(df$status)
-  df$status = df$status - min(df$status)
   if (!all(df$status %in% c(0,1))){stop("'status' must be either 0 or 1.")}
   
   df$arm = as.factor(df$arm)
@@ -121,7 +119,6 @@ print.multi_ts = function(x, ...){
   cat("",end="\n")
   if (nb_tests > 1) {cat("p=",x$p,sep="")}
 }
-
 
 
 

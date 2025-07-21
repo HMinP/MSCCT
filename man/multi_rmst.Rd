@@ -10,9 +10,9 @@ multi_rmst(df, tau = -1, method = p.adjust.methods, nboot = 500)
 \item{df}{A dataframe with columns :
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
-\item \code{status} : integer of factor. 0 is (right) censoring, 1 is event;
-\item \code{arm} : integers or factor with at least 2 levels.
-The group the patient belongs to.
+\item \code{status} : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+\item \code{arm} : a factor or object that can be coerced to one. The group the patient
+belongs to. Must have at least two levels.
 }}
 
 \item{tau}{The truncation time, default is the lowest max(time) of each groups;}
