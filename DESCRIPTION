@@ -1,8 +1,9 @@
 Package: MSCCT
 Title: Multiple Survival Crossing Curves Tests
 Version: 0.0.9000
-Authors@R: 
-    person("Hugo", "MINA PASSI", , "Hugo_Mina-Passi@etu.u-bourgogne.fr", role = c("aut", "cre"))
+Authors@R: c(
+    person("Hugo", "MINA PASSI", , "hugo.minapassi@gmail.com", role = c("aut", "cre")),
+    person("Olayidé", "BOUSSARI", , "olayide.boussari@u-bourgogne.fr", role = "aut"))
 Description: Comparison of two or more survival curves whether the proportional hazards
     hypothesis is verified or not.
 License: GPL (>= 3)
