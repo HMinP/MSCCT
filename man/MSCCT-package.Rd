@@ -9,7 +9,12 @@
 Comparison of two or more survival curves whether the proportional hazards hypothesis is verified or not.
 }
 \author{
-\strong{Maintainer}: Hugo MINA PASSI \email{Hugo_Mina-Passi@etu.u-bourgogne.fr}
+\strong{Maintainer}: Hugo MINA PASSI \email{hugo.minapassi@gmail.com}
+
+Authors:
+\itemize{
+  \item Olayidé BOUSSARI \email{olayide.boussari@u-bourgogne.fr}
+}
 
 }
 \keyword{internal}
