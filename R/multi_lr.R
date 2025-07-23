@@ -2,32 +2,34 @@
 #'
 #' Performs a global log-rank test for comparing two or more survival curves.
 #'
-#' For the log-rank test, all the weights are equal to one. Gehan-Wilcoxon uses the
-#' number of patients still at risk as weights. For the Flemming-Harrington test,
-#' the weights are S(t)^rho * (1-S(t))^gamma where S is the global survival function.
-#'
-#' If `weights` is a vector, performs one log-rank test with the given weights.
-#' Weights are given in the same order as time of event : the first weight correspond
-#' to the earliest time of event, and so on. Throws an error if the number of given
-#' weights is not equal to the number of distinct time of events. Returns the test
-#' statistic and the p-value.
-#'
-#' If `weights` is a matrix (or a two-dimensional object), each columns correspond to
-#' a set of weights. Throws an error if the number of `nrow(weights)` is not equal to
-#' the number of distinct time of events. Returns `ncol(weights)` test statistics and
-#' the corresponding p-value.
+#' `weights` contains the chosen weights for the test. It must be a vector, a matrix
+#' or an object that can be coerced to a matrix, like a data frame (passed as 
+#' argument to `as.matrix`). Can be omitted.
 #' 
-#' @usage multi_lr(df, weights = numeric(), test = c("lr", "gw", "fh"), rho = 1, gamma = 0)
+#' If not given (default), then perform either a log-rank test, a Gehan-Wilcoxon
+#' test or a Fleming-Harrington test depending on the choice of `test`.
+#' 
+#' If `weights` is a one-dimension vector, its length must be equal to the
+#' number of distinct time of event and throws an error if it is not true. In this
+#' case, `multi_lr()` performs a weighted log-rank test with the specified weights.
+#' 
+#' If `weights` is a matrix (or a two-dimension object), its number of rows
+#' must be equal to the number of distinct time of event and throws an error if
+#' it is not true. In this case, `multi_lr()` performs as many tests as the
+#' number of columns in `weights`. The first test is a weighted log-rank test
+#' with weights the first column of `weights`, the second test is a weighted
+#' log-rank test with weights the second column of `weights`, and so on.
+#' 
+#' @usage multi_lr(df, weights, test = c("lr", "gw", "fh"), rho = 1, gamma = 0)
 #'
-#' @param df A dataframe with columns :
+#' @param df A data frame with columns :
 #'   * `time` : positive numbers, time-to-event;
-#'   * `status` : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+#'   * `status` : vector of integer, 0 or 1. 0 is (right) censoring, 1 is event;
 #'   * `arm` : a factor or object that can be coerced to one. The group the patient 
 #'     belongs to. Must have at least two levels.
 #' @param weights An object that can be coerced to a matrix. The weights
-#'   used for the tests. Default is vector of ones, corresponding to
-#'   the usual log-rank test (see Details);
-#' @param test If weights is not given, specifies the test to perform. Possible values are
+#'   used for the tests. Can be omitted (see Details);
+#' @param test If `weights` is omitted, specify the test to perform. Possible values are
 #'   `lr` for log-rank, `gw` for Gehan-Wilcoxon, and `fh` for Flemming-Harrington;
 #' @param rho,gamma The parameters for Flemming-Harrington test. Default is (rho,gamma)=(1,0),
 #'   which is also called the Peto-Peto test.
@@ -35,7 +37,7 @@
 #' @return An object of class `multi_lr` containing:
 #'   * `U` : Statistics of tests;
 #'   * `p` : The corresponding p-values;
-#'   * `df` : Degrees of freedom of the statistics of tests;
+#'   * `degree` : Degrees of freedom of the statistics of tests;
 #'   * `test` : The performed test.
 #'
 #' @export
@@ -52,7 +54,7 @@
 #' nb_evt_time = length(evt_time)
 #' weights = matrix(runif(nb_evt_time*3), ncol=3)
 #' multi_lr(data_not_PH, weights=weights)
-multi_lr = function(df, weights=numeric(), test=c("lr", "gw", "fh"), rho=1, gamma=0){
+multi_lr = function(df, weights, test = c("lr", "gw", "fh"), rho = 1, gamma = 0){
   test = match.arg(test)
   
   if (!all(c("time", "status", "arm") %in% colnames(df))){
@@ -87,7 +89,7 @@ multi_lr = function(df, weights=numeric(), test=c("lr", "gw", "fh"), rho=1, gamm
   Y = Y[1:(nb_arms-1), , drop=FALSE]
   
   
-  if (length(weights) == 0) {
+  if (missing(weights)) {
     if (test == "lr"){weights = matrix(1, nrow=length(evt_time_ordered), ncol=1)}
     else if (test == "gw"){weights = matrix(y_total, ncol=1)}
     else if (test == "fh"){
@@ -120,7 +122,7 @@ multi_lr = function(df, weights=numeric(), test=c("lr", "gw", "fh"), rho=1, gamm
   U = as.numeric(U)
   p = 1 - pchisq(U,nb_arms-1)
   
-  z = list(U=U, p=p, df=nb_arms-1, test=test, rho=rho, gamma=gamma)
+  z = list(U=U, p=p, degree=nb_arms-1, test=test, rho=rho, gamma=gamma)
   class(z) = "multi_lr"
   return(z)
 }
@@ -140,7 +142,7 @@ print.multi_lr = function(x, ...){
   else if (x$test == "fh"){
     cat("Flemming-Harrington test \n")
     cat("Parameters : rho =", x$rho, ", gamma = ", x$gamma, "\n")}
-  cat("Degrees of freedom :", x$df, "\n\n")
+  cat("Degrees of freedom :", x$degree, "\n\n")
   M = matrix(c(x$U, x$p), ncol=2, byrow=FALSE)
   labs = rep(NA, length(x$U))
   for (i in 1:length(labs)){labs[i] = paste("Test", i)}

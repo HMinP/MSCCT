@@ -4,20 +4,21 @@
 \alias{multi_rmst}
 \title{Test of RMST for comparing two or more survival curves}
 \usage{
-multi_rmst(df, tau = -1, method = p.adjust.methods, nboot = 500)
+multi_rmst(df, tau, method = p.adjust.methods, nboot = 500)
 }
 \arguments{
 \item{df}{A dataframe with columns :
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
-\item \code{status} : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+\item \code{status} : vector of integer, 0 or 1. 0 is (right) censoring, 1 is event;
 \item \code{arm} : a factor or object that can be coerced to one. The group the patient
 belongs to. Must have at least two levels.
 }}
 
-\item{tau}{The truncation time, default is the lowest max(time) of each groups;}
+\item{tau}{The truncation time, default is the lowest of the max(time) of the groups;}
 
-\item{method}{The correction used for the p-values. Must be in \link{p.adjust.methods}. Unused for exactly two groups.}
+\item{method}{The correction used for the p-values. Must be in \link{p.adjust.methods}.
+Default is the Holm correction. Unused if number of groups equals two.}
 
 \item{nboot}{Number of bootstrap samples;}
 }
@@ -26,20 +27,22 @@ an object of class \code{multi_rmst} containing :
 \itemize{
 \item \code{results} A matrix. Each row represents a comparison of two curves and contains the difference
 of RMST, its standard deviation, the p-value and the adjusted p-value;
+\item \code{rmst_mat} RMST estimation for each arm;
 \item \code{p} The p-value of the global test;
-\item \code{nb_tests} : The number of performed tests;
+\item \code{nb_tests} The number of performed tests;
 \item The parameters \code{tau}, \code{method} and \code{nboot}.
 }
 }
 \description{
-Performs the test of Restricted Mean Survival Time for two or more survival curves,
-i.e. compares the difference of areas under survival curves.
+Performs the test of Restricted Mean Survival Time for two or more survival curves
+by comparing the difference of areas under survival curves.
 }
 \details{
-For one group, the Restricted Mean Survival Time at time tau (RMST(tau)) is the area
-under the survival curve between time 0 and tau. The test of RMST compares the
-RMST(tau) from both groups and tests whether the difference is zero or not. If the
-difference is not null, then the survival curves cannot be equal.
+For each group, the Restricted Mean Survival Time at time tau (RMST(tau)) is computed as the area
+under the survival curve between time 0 and tau. The test of RMST is a pairwise
+multiple comparison test. For each pair of groups, it tests whether the difference
+between the RMST(tau) is zero or not. If the difference is not null, then the
+survival curves cannot be equal.
 
 For exactly two groups, a single test is performed. For more than two survival curves,
 it compares each survival curve to every other curves and tests the global null

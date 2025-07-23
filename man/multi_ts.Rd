@@ -10,14 +10,15 @@ multi_ts(df, method = p.adjust.methods, eps = 0.1, nboot = 100)
 \item{df}{A dataframe with columns :
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
-\item \code{status} : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+\item \code{status} : vector of integer, 0 or 1. 0 is (right) censoring, 1 is event;
 \item \code{arm} : a factor or object that can be coerced to one. The group the patient
 belongs to. Must have at least two levels.
 }}
 
-\item{method}{The correction used for the p-values. Must be in \link{p.adjust.methods}. Unused for exactly two groups;}
+\item{method}{The correction used for the p-values. Must be in \link{p.adjust.methods}.
+Default is the Holm correction. Unused if number of groups equals two.}
 
-\item{eps}{A number from 0 to 0.5. See reference for interpretation;}
+\item{eps}{A number such that 0 < \code{eps} < 0.5. See reference for more information;}
 
 \item{nboot}{A positive integer, number of bootstrap sample for the second stage;}
 }
@@ -26,21 +27,24 @@ An object of class \code{multi_ts} containing:
 \itemize{
 \item \code{results} : A matrix. Each row represents a comparison of two curves and contains
 the p-values for both stage, the global p-value and the adjusted global p-value;
-\item \code{p} : The global p-value for the global test;
+\item \code{p} : The p-value for the global test;
 \item \code{nb_tests} : The number of performed Two-Stage tests;
 \item the parameters \code{eps}, \code{method} and \code{nboot}.
 }
 }
 \description{
-Performs a Two-Stage test for each pair of survival curves and apply a correction
+Performs a two-stage test for each pair of survival curves and apply a correction
 in case of several comparisons.
 }
 \details{
-The first stage is a log-rank test. If the first test is significant, then the whole
+For a two-stage test, the first stage is a log-rank test. If the first test is significant, then the whole
 procedure stops and we conclude that the survival curves are different. If it is not
 significant, then the survival curves are either equal or crossing each other and
 the log-rank test can't conclude the difference. A second test is performed to distinguish
 these two cases.
+
+For multiple curves comparison, the two-stage test is a pairwise test.
+A two-stage test is performed for each pair of curves.
 }
 \examples{
 multi_ts(data_not_PH, method = "BH", eps = 0.1, nboot = 100)
@@ -50,7 +54,8 @@ multi_ts(data_not_PH, method = "BH", eps = 0.1, nboot = 100)
 \item Qiu, P., & Sheng, J. (2008). A two-stage procedure for comparing
 hazard rate functions. Journal of the Royal Statistical Society Series
 B: Statistical Methodology, 70(1), 191-208. Chen, Zhongxue & Huang, Hanwen & Qiu, Peihua. (2017).
-\item An improved two-stage procedure to compare hazard curves. Journal of Statistical
-Computation and Simulation. 87. 1-10. 10.1080/00949655.2017.1292276.
+\item Chen, Z., Huang, H., & Qiu, P. (2017). An improved two-stage procedure
+to compare hazard curves. Journal of Statistical Computation and Simulation,
+87(9), 1877-1886.
 }
 }

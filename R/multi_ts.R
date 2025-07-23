@@ -1,29 +1,34 @@
 #' Two-staged test for comparison of two or more survival curves.
 #'
-#' Performs a Two-Stage test for each pair of survival curves and apply a correction
+#' Performs a two-stage test for each pair of survival curves and apply a correction
 #' in case of several comparisons.
 #'
-#' The first stage is a log-rank test. If the first test is significant, then the whole
+#' For a two-stage test, the first stage is a log-rank test. If the first test is significant, then the whole
 #' procedure stops and we conclude that the survival curves are different. If it is not
 #' significant, then the survival curves are either equal or crossing each other and
 #' the log-rank test can't conclude the difference. A second test is performed to distinguish
 #' these two cases.
 #' 
+#' For multiple curves comparison, the two-stage test is a pairwise test. 
+#' A two-stage test is performed for each pair of curves.
+#' 
+#' 
 #' @usage multi_ts(df, method = p.adjust.methods, eps = 0.1, nboot = 100)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
-#'   * `status` : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+#'   * `status` : vector of integer, 0 or 1. 0 is (right) censoring, 1 is event;
 #'   * `arm` : a factor or object that can be coerced to one. The group the patient 
 #'     belongs to. Must have at least two levels.
-#' @param eps A number from 0 to 0.5. See reference for interpretation;
+#' @param eps A number such that 0 < `eps` < 0.5. See reference for more information;
 #' @param nboot A positive integer, number of bootstrap sample for the second stage;
-#' @param method The correction used for the p-values. Must be in [p.adjust.methods]. Unused for exactly two groups;
+#' @param method The correction used for the p-values. Must be in [p.adjust.methods]. 
+#'   Default is the Holm correction. Unused if number of groups equals two.
 #'
 #' @return An object of class `multi_ts` containing:
 #'   * `results` : A matrix. Each row represents a comparison of two curves and contains
 #'     the p-values for both stage, the global p-value and the adjusted global p-value;
-#'   * `p` : The global p-value for the global test;
+#'   * `p` : The p-value for the global test;
 #'   * `nb_tests` : The number of performed Two-Stage tests;
 #'   * the parameters `eps`, `method` and `nboot`.
 #'
@@ -31,8 +36,9 @@
 #'    * Qiu, P., & Sheng, J. (2008). A two-stage procedure for comparing
 #'      hazard rate functions. Journal of the Royal Statistical Society Series
 #'      B: Statistical Methodology, 70(1), 191-208. Chen, Zhongxue & Huang, Hanwen & Qiu, Peihua. (2017).
-#'    * An improved two-stage procedure to compare hazard curves. Journal of Statistical
-#'      Computation and Simulation. 87. 1-10. 10.1080/00949655.2017.1292276.
+#'    * Chen, Z., Huang, H., & Qiu, P. (2017). An improved two-stage procedure 
+#'      to compare hazard curves. Journal of Statistical Computation and Simulation,
+#'      87(9), 1877-1886.
 #'
 #' @export
 #'

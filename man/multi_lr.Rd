@@ -4,22 +4,21 @@
 \alias{multi_lr}
 \title{(Weighted) Log-rank test for comparison of two or more survival curves.}
 \usage{
-multi_lr(df, weights = numeric(), test = c("lr", "gw", "fh"), rho = 1, gamma = 0)
+multi_lr(df, weights, test = c("lr", "gw", "fh"), rho = 1, gamma = 0)
 }
 \arguments{
-\item{df}{A dataframe with columns :
+\item{df}{A data frame with columns :
 \itemize{
 \item \code{time} : positive numbers, time-to-event;
-\item \code{status} : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+\item \code{status} : vector of integer, 0 or 1. 0 is (right) censoring, 1 is event;
 \item \code{arm} : a factor or object that can be coerced to one. The group the patient
 belongs to. Must have at least two levels.
 }}
 
 \item{weights}{An object that can be coerced to a matrix. The weights
-used for the tests. Default is vector of ones, corresponding to
-the usual log-rank test (see Details);}
+used for the tests. Can be omitted (see Details);}
 
-\item{test}{If weights is not given, specifies the test to perform. Possible values are
+\item{test}{If \code{weights} is omitted, specify the test to perform. Possible values are
 \code{lr} for log-rank, \code{gw} for Gehan-Wilcoxon, and \code{fh} for Flemming-Harrington;}
 
 \item{rho, gamma}{The parameters for Flemming-Harrington test. Default is (rho,gamma)=(1,0),
@@ -30,7 +29,7 @@ An object of class \code{multi_lr} containing:
 \itemize{
 \item \code{U} : Statistics of tests;
 \item \code{p} : The corresponding p-values;
-\item \code{df} : Degrees of freedom of the statistics of tests;
+\item \code{degree} : Degrees of freedom of the statistics of tests;
 \item \code{test} : The performed test.
 }
 }
@@ -38,20 +37,23 @@ An object of class \code{multi_lr} containing:
 Performs a global log-rank test for comparing two or more survival curves.
 }
 \details{
-For the log-rank test, all the weights are equal to one. Gehan-Wilcoxon uses the
-number of patients still at risk as weights. For the Flemming-Harrington test,
-the weights are S(t)^rho * (1-S(t))^gamma where S is the global survival function.
+\code{weights} contains the chosen weights for the test. It must be a vector, a matrix
+or an object that can be coerced to a matrix, like a data frame (passed as
+argument to \code{as.matrix}). Can be omitted.
 
-If \code{weights} is a vector, performs one log-rank test with the given weights.
-Weights are given in the same order as time of event : the first weight correspond
-to the earliest time of event, and so on. Throws an error if the number of given
-weights is not equal to the number of distinct time of events. Returns the test
-statistic and the p-value.
+If not given (default), then perform either a log-rank test, a Gehan-Wilcoxon
+test or a Fleming-Harrington test depending on the choice of \code{test}.
 
-If \code{weights} is a matrix (or a two-dimensional object), each columns correspond to
-a set of weights. Throws an error if the number of \code{nrow(weights)} is not equal to
-the number of distinct time of events. Returns \code{ncol(weights)} test statistics and
-the corresponding p-value.
+If \code{weights} is a one-dimension vector, its length must be equal to the
+number of distinct time of event and throws an error if it is not true. In this
+case, \code{multi_lr()} performs a weighted log-rank test with the specified weights.
+
+If \code{weights} is a matrix (or a two-dimension object), its number of rows
+must be equal to the number of distinct time of event and throws an error if
+it is not true. In this case, \code{multi_lr()} performs as many tests as the
+number of columns in \code{weights}. The first test is a weighted log-rank test
+with weights the first column of \code{weights}, the second test is a weighted
+log-rank test with weights the second column of \code{weights}, and so on.
 }
 \examples{
 # Log-rank test
