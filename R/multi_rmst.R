@@ -1,33 +1,36 @@
 #' Test of RMST for comparing two or more survival curves
 #'
-#' Performs the test of Restricted Mean Survival Time for two or more survival curves,
-#' i.e. compares the difference of areas under survival curves.
+#' Performs the test of Restricted Mean Survival Time for two or more survival curves
+#' by comparing the difference of areas under survival curves.
 #'
-#' For one group, the Restricted Mean Survival Time at time tau (RMST(tau)) is the area
-#' under the survival curve between time 0 and tau. The test of RMST compares the
-#' RMST(tau) from both groups and tests whether the difference is zero or not. If the
-#' difference is not null, then the survival curves cannot be equal.
+#' For each group, the Restricted Mean Survival Time at time tau (RMST(tau)) is computed as the area
+#' under the survival curve between time 0 and tau. The test of RMST is a pairwise
+#' multiple comparison test. For each pair of groups, it tests whether the difference
+#' between the RMST(tau) is zero or not. If the difference is not null, then the
+#' survival curves cannot be equal.
 #'
 #' For exactly two groups, a single test is performed. For more than two survival curves,
 #' it compares each survival curve to every other curves and tests the global null
 #' hypothesis "all curves are equal" against the hypothesis "the curves are not all equal".
 #' 
-#' @usage multi_rmst(df, tau = -1, method = p.adjust.methods, nboot = 500)
+#' @usage multi_rmst(df, tau, method = p.adjust.methods, nboot = 500)
 #'
 #' @param df A dataframe with columns :
 #'   * `time` : positive numbers, time-to-event;
-#'   * `status` : vector of integer from 0 to 1. 0 is (right) censoring, 1 is event;
+#'   * `status` : vector of integer, 0 or 1. 0 is (right) censoring, 1 is event;
 #'   * `arm` : a factor or object that can be coerced to one. The group the patient 
 #'     belongs to. Must have at least two levels.
-#' @param tau The truncation time, default is the lowest max(time) of each groups;
+#' @param tau The truncation time, default is the lowest of the max(time) of the groups;
 #' @param nboot Number of bootstrap samples;
-#' @param method The correction used for the p-values. Must be in [p.adjust.methods]. Unused for exactly two groups.
+#' @param method The correction used for the p-values. Must be in [p.adjust.methods]. 
+#'   Default is the Holm correction. Unused if number of groups equals two.
 #'
 #' @return an object of class `multi_rmst` containing :
 #'   * `results` A matrix. Each row represents a comparison of two curves and contains the difference
 #'     of RMST, its standard deviation, the p-value and the adjusted p-value;
+#'   * `rmst_mat` RMST estimation for each arm;
 #'   * `p` The p-value of the global test;
-#'   * `nb_tests` : The number of performed tests;
+#'   * `nb_tests` The number of performed tests;
 #'   * The parameters `tau`, `method` and `nboot`.
 #'
 #' @references Royston, P., & Parmar, M. K. (2013). Restricted mean survival time:
@@ -39,11 +42,8 @@
 #' multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 1000)
 #'
 #' @export
-multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
-  if (length(method) != 1){method = "bonferroni"}
-  i = which(stats::p.adjust.methods == "bonferroni")
-  choices = c(stats::p.adjust.methods[i], stats::p.adjust.methods[-i])
-  method = match.arg(method, choices)
+multi_rmst = function(df, tau, method = p.adjust.methods, nboot = 500){
+  method = match.arg(method)
   
   if (!all(c("time", "status", "arm") %in% colnames(df))){
     stop("The dataframe must contain the columns 'time', 'status' and 'arm'.")
@@ -53,33 +53,39 @@ multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
   
   df$arm = as.factor(df$arm)
   lev = levels(df$arm)
-  df$arm = as.numeric(df$arm) - 1
+  df$arm = as.numeric(df$arm)
   nb_arms = length(lev)
   if (nb_arms < 2){stop("Need at least two groups.")}
   
-  if (tau == -1){tau = min(tapply(X=df$time, INDEX=df$arm, FUN=max))}
+  if (missing(tau)){tau = min(tapply(X=df$time, INDEX=df$arm, FUN=max))}
   
-  nb_tests = nb_arms*(nb_arms-1) / 2
-  label_test = rep(NA,nb_tests)
-  results = matrix(NA,nrow=nb_tests,ncol=4)
-  k=1
+  rmst_mat = matrix(NA, nrow = nb_arms, ncol = 2)
+  label_rmst = rep(NA, nb_arms)
+  for (i in 1:nb_arms){
+    label_rmst[i] = paste("arm", lev[i])
+    df_i = df[df$arm == i,]
+    X = boot(df_i, rmst_unique, R = nboot, tau = tau)
+    rmst_mat[i, 1] = X$t0
+    rmst_mat[i, 2] = sqrt(var(X$t))
+  }
   
-  for (i in 0:(nb_arms-2)){
-    for (j in (i+1):(nb_arms-1)){
-      label_test[k] = paste(lev[i+1], "VS", lev [j+1])
+  nb_tests = nb_arms*(nb_arms - 1) / 2
+  label_test = rep(NA, nb_tests)
+  results = matrix(NA, nrow = nb_tests, ncol = 4)
+  k = 1
+  for (i in 1:(nb_arms - 1)){
+    for (j in (i+1):nb_arms){
+      label_test[k] = paste(lev[i], "VS", lev [j])
+      results[k, 1] = rmst_mat[j, 1] - rmst_mat[i, 1]
+      results[k, 2] = sqrt(rmst_mat[j, 2]^2 + rmst_mat[i, 2]^2)
+      results[k, 3] = 2 * (1 - stats::pnorm(abs(results[k, 1] / results[k, 2])))
       
-      ind = (df$arm == i) | (df$arm == j)
-      df_ij = df[ind,]
-      df_ij$arm = (df_ij$arm - i) / (j-i)
-      
-      X = boot(df_ij, rmstdiff, R=nboot, tau=tau)
-      results[k,1] = X$t0
-      results[k,2] = sd(X$t)
-      results[k,3] = 2*(1-stats::pnorm(abs(results[k,1]/results[k,2])))
-      
-      k=k+1
+      k=k + 1
     }
   }
+  
+  rownames(rmst_mat) = label_rmst
+  colnames(rmst_mat) = c("rmst", "sd")
   
   if (nb_tests == 1){
     results = results[, -4, drop=FALSE]
@@ -94,8 +100,8 @@ multi_rmst = function(df, tau = -1, method = p.adjust.methods, nboot = 500){
     colnames(results) = c("dRMST","sd","p","p adjusted")
   }
   
-  z = list(results=results, tau=tau, p=p, nb_tests=nb_tests,
-           method=method, nboot=nboot)
+  z = list(rmst_mat = rmst_mat, results = results, tau = tau, p = p,
+           nb_tests = nb_tests, method = method, nboot = nboot)
   class(z) = "multi_rmst"
   return(z)
 }
@@ -115,6 +121,9 @@ print.multi_rmst = function(x, ...){
   cat("(Multiple) test of RMST \n")
   cat("Truncation time :",x$tau," \n")
   if (nb_tests > 1) {cat("Correction :",x$method,"\n\n")}
+  cat("RMST estimation for each arm \n")
+  print(x$rmst_mat)
+  cat("\nPair-wise comparisons \n")
   print(x$results)
   cat("",end="\n")
   if (nb_tests > 1) {cat("p=",x$p,sep="")}
@@ -123,28 +132,19 @@ print.multi_rmst = function(x, ...){
 
 
 
-rmstdiff = function(df, ind=numeric(), tau=-1){
-  time = df$time
-  status = df$status
-  if (length(ind) == 0){ind = 1:length(time)}
+rmst_unique = function(df, ind, tau){
+  if (missing(ind)){ind = 1:length(df$time)}
+  time = df$time[ind]
+  status = df$status[ind]
   arm = df$arm[ind] # shuffling the arm variable
   
-  time0 = time[arm == 0]
-  status0 = status[arm == 0]
-  time1 = time[arm == 1]
-  status1 = status[arm == 1]
-  
-  KM1 = survival::survfit(survival::Surv(time1,status1)~1)
-  KM0 = survival::survfit(survival::Surv(time0,status0)~1)
-  S1 = stats::stepfun(KM1$time, c(1,KM1$surv), right=FALSE)
-  S0 = stats::stepfun(KM0$time, c(1,KM0$surv), right=FALSE)
-  
-  time_evt = unique(sort(c(0, KM0$time[KM0$time < tau], KM1$time[KM1$time < tau], tau)))
+  KM = survival::survfit(survival::Surv(time, status)~1)
+  S = stats::stepfun(KM$time, c(1, KM$surv), right = FALSE)
+  time_evt = unique(sort(c(0, KM$time[KM$time < tau], tau)))
   time_int = time_evt[-1]-time_evt[-length(time_evt)]
+  surv = S(time_evt[-length(time_evt)])
+  rmst = sum(surv * time_int)
   
-  surv_diff = S1(time_evt) - S0(time_evt)
-  surv_diff = surv_diff[-length(surv_diff)]
-  drmst = sum(surv_diff*time_int)
-  return(drmst)
+  return(rmst)
 }
 
