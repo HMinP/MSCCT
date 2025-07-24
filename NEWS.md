@@ -1,3 +1,5 @@
+# MSCCT 1.0.0
+
 ---
 output:
   pdf_document: default
