@@ -11,6 +11,15 @@
 
 \item{...}{For compatibility with the \code{print} method, unused and to be ignored.}
 }
+\value{
+None
+}
 \description{
 Print method for the multiple log-rank test
+}
+\examples{
+  x = multi_lr(data_not_PH)
+  print(x)
+
+
 }

@@ -45,19 +45,19 @@ multi_lr(data_under_PH)
 #> Degrees of freedom : 2 
 #> 
 #>        Statistic p
-#> Test 1  80.17764 0
+#> Test 1   142.864 0
 ```
 
 ``` r
-multi_lr(data_under_PH, weights=numeric(), test="fh", rho=1, gamma=0)
+multi_lr(data_under_PH, test="fh", rho=1, gamma=0)
 #> (Multiple) Weighted log-rank test 
 #> 
 #> Weighting : Flemming-Harrington test 
 #> Parameters : rho = 1 , gamma =  0 
 #> Degrees of freedom : 2 
 #> 
-#>        Statistic            p
-#> Test 1  71.47735 3.330669e-16
+#>        Statistic p
+#> Test 1  112.1108 0
 ```
 
 - The Restricted Mean Survival Test
@@ -73,12 +73,19 @@ multi_rmst(data_under_PH, tau=12, nboot=100, method="bonferroni")
 #> Truncation time : 12  
 #> Correction : bonferroni 
 #> 
-#>            dRMST        sd            p   p adjusted
-#> 0 VS 1 -1.518564 0.4162182 2.637962e-04 7.913886e-04
-#> 0 VS 2 -2.621846 0.4092926 1.495843e-10 4.487530e-10
-#> 1 VS 2 -1.103282 0.4060768 6.589085e-03 1.976726e-02
+#> RMST estimation for each arm 
+#>            rmst        sd
+#> arm 0 10.232101 0.1777291
+#> arm 1  9.380293 0.2147322
+#> arm 2  8.179610 0.2163973
+#> 
+#> Pair-wise comparisons 
+#>             dRMST        sd            p   p adjusted
+#> 0 VS 1 -0.8518077 0.2787428 2.243925e-03 6.731774e-03
+#> 0 VS 2 -2.0524910 0.2800275 2.309264e-13 6.927792e-13
+#> 1 VS 2 -1.2006833 0.3048569 8.198752e-05 2.459625e-04
 #>  
-#> p=4.48753e-10
+#> p=6.927792e-13
 ```
 
 - The Two-stage test
@@ -97,9 +104,9 @@ multi_ts(data_under_PH, eps=0.1, nboot=100, method="BH")
 #> Correction : BH  
 #> 
 #>                  p1   p2            p        adj_p
-#> 0 VS 1 9.377383e-09 0.75 1.390618e-07 2.085926e-07
-#> 0 VS 2 0.000000e+00 0.00 3.774758e-15 1.132427e-14
-#> 1 VS 2 6.246677e-04 0.14 9.046541e-04 9.046541e-04
+#> 0 VS 1 5.486672e-09 0.75 8.357007e-08 8.357007e-08
+#> 0 VS 2 0.000000e+00 0.05 3.774758e-15 1.132427e-14
+#> 1 VS 2 2.401913e-10 0.86 4.813040e-09 7.219560e-09
 #>  
 #> p=1.132427e-14
 ```

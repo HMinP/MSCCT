@@ -6,10 +6,18 @@
 \alias{MSCCT-package}
 \title{MSCCT: Multiple Survival Crossing Curves Tests}
 \description{
-Comparison of two or more survival curves whether the proportional hazards hypothesis is verified or not.
+Tests of comparison of two or more survival curves. Allows for comparison of more than two survival curves whether the proportional hazards hypothesis is verified or not.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/HMinP/MSCCT}
+  \item Report bugs at \url{https://github.com/HMinP/MSCCT/issues}
+}
+
 }
 \author{
-\strong{Maintainer}: Hugo MINA PASSI \email{hugo.minapassi@gmail.com}
+\strong{Maintainer}: Hugo MINA PASSI \email{hugo.minapassi@gmail.com} [copyright holder]
 
 Authors:
 \itemize{

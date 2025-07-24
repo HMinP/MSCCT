@@ -11,6 +11,16 @@
 
 \item{...}{For compatibility with the \code{print} method, unused and to be ignored.}
 }
+\value{
+None
+}
 \description{
 Print method for the multiple Two-Stage test
+}
+\examples{
+  # test with a quarter of the data frame data_not_PH
+  ind = c(1:100, 401:500, 801:900)
+  x = multi_ts(data_not_PH[ind,], method = "BH", eps = 0.1, nboot = 10)
+  print(x)
+
 }

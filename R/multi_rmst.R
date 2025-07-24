@@ -25,10 +25,10 @@
 #' @param method The correction used for the p-values. Must be in [p.adjust.methods]. 
 #'   Default is the Holm correction. Unused if number of groups equals two.
 #'
-#' @return an object of class `multi_rmst` containing :
+#' @return An object of class `multi_rmst` containing :
+#'   * `rmst_mat` RMST estimation for each arm;
 #'   * `results` A matrix. Each row represents a comparison of two curves and contains the difference
 #'     of RMST, its standard deviation, the p-value and the adjusted p-value;
-#'   * `rmst_mat` RMST estimation for each arm;
 #'   * `p` The p-value of the global test;
 #'   * `nb_tests` The number of performed tests;
 #'   * The parameters `tau`, `method` and `nboot`.
@@ -38,8 +38,8 @@
 #'     trials with a time-to-event outcome. BMC medical research methodology, 13, 1-15.
 #'
 #' @examples
-#' multi_rmst(data_under_PH, tau = 36)
-#' multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 1000)
+#'   multi_rmst(data_under_PH, tau = 36, nboot = 300)
+#'   multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 300)
 #'
 #' @export
 multi_rmst = function(df, tau, method = p.adjust.methods, nboot = 500){
@@ -100,7 +100,7 @@ multi_rmst = function(df, tau, method = p.adjust.methods, nboot = 500){
     colnames(results) = c("dRMST","sd","p","p adjusted")
   }
   
-  z = list(rmst_mat = rmst_mat, results = results, tau = tau, p = p,
+  z = list(results = results, rmst_mat = rmst_mat, tau = tau, p = p,
            nb_tests = nb_tests, method = method, nboot = nboot)
   class(z) = "multi_rmst"
   return(z)
@@ -113,6 +113,12 @@ multi_rmst = function(df, tau, method = p.adjust.methods, nboot = 500){
 #'
 #' @param x An object of class `multi_rmst` as returned by [multi_rmst()];
 #' @param ... For compatibility with the `print` method, unused and to be ignored.
+#' 
+#' @return None
+#' 
+#' @examples 
+#'   x = multi_rmst(data_under_PH, tau = 36, nboot = 300)
+#'   print(x)
 #'
 #' @export
 print.multi_rmst = function(x, ...){

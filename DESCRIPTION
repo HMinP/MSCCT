@@ -4,8 +4,9 @@ Version: 0.0.9000
 Authors@R: c(
     person("Hugo", "MINA PASSI", , "hugo.minapassi@gmail.com", role = c("aut", "cre", "cph")),
     person("Olayidé", "BOUSSARI", , "olayide.boussari@u-bourgogne.fr", role = "aut"))
-Description: Comparison tests of two or more survival curves. Both proportional hazards
-    and non proportional hazards assumptions are considered.
+Description: Tests of comparison of two or more survival curves. Allows for 
+    comparison of more than two survival curves whether the proportional
+    hazards hypothesis is verified or not.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -38,22 +38,22 @@
 #'   * `U` : Statistics of tests;
 #'   * `p` : The corresponding p-values;
 #'   * `degree` : Degrees of freedom of the statistics of tests;
-#'   * `test` : The performed test.
+#'   * The argument `test`, changed to "chosen" if weights are given.
 #'
 #' @export
 #'
 #' @examples
-#' # Log-rank test
-#' multi_lr(data_not_PH)
+#'   # Log-rank test
+#'   multi_lr(data_not_PH)
 #'
-#' # Gehan-Wilcoxon test
-#' multi_lr(data_not_PH, test="gw")
+#'   # Gehan-Wilcoxon test
+#'   multi_lr(data_not_PH, test="gw")
 #'
-#' # It is possible to run several tests with different weights at a time
-#' evt_time = unique(data_not_PH$time[data_not_PH$status == 1])
-#' nb_evt_time = length(evt_time)
-#' weights = matrix(runif(nb_evt_time*3), ncol=3)
-#' multi_lr(data_not_PH, weights=weights)
+#'   # It is possible to run several tests with different weights at a time
+#'   evt_time = unique(data_not_PH$time[data_not_PH$status == 1])
+#'   nb_evt_time = length(evt_time)
+#'   weights = matrix(runif(nb_evt_time*3), ncol=3)
+#'   multi_lr(data_not_PH, weights=weights)
 multi_lr = function(df, weights, test = c("lr", "gw", "fh"), rho = 1, gamma = 0){
   test = match.arg(test)
   
@@ -131,6 +131,13 @@ multi_lr = function(df, weights, test = c("lr", "gw", "fh"), rho = 1, gamma = 0)
 #'
 #' @param x An object of class `multi_lr` as returned by [multi_lr()];
 #' @param ... For compatibility with the `print` method, unused and to be ignored.
+#' 
+#' @return None
+#' 
+#' @examples
+#'   x = multi_lr(data_not_PH)
+#'   print(x)
+#' 
 #'
 #' @export
 print.multi_lr = function(x, ...){

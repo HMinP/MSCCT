@@ -30,7 +30,7 @@ An object of class \code{multi_lr} containing:
 \item \code{U} : Statistics of tests;
 \item \code{p} : The corresponding p-values;
 \item \code{degree} : Degrees of freedom of the statistics of tests;
-\item \code{test} : The performed test.
+\item The argument \code{test}, changed to "chosen" if weights are given.
 }
 }
 \description{
@@ -56,15 +56,15 @@ with weights the first column of \code{weights}, the second test is a weighted
 log-rank test with weights the second column of \code{weights}, and so on.
 }
 \examples{
-# Log-rank test
-multi_lr(data_not_PH)
+  # Log-rank test
+  multi_lr(data_not_PH)
 
-# Gehan-Wilcoxon test
-multi_lr(data_not_PH, test="gw")
+  # Gehan-Wilcoxon test
+  multi_lr(data_not_PH, test="gw")
 
-# It is possible to run several tests with different weights at a time
-evt_time = unique(data_not_PH$time[data_not_PH$status == 1])
-nb_evt_time = length(evt_time)
-weights = matrix(runif(nb_evt_time*3), ncol=3)
-multi_lr(data_not_PH, weights=weights)
+  # It is possible to run several tests with different weights at a time
+  evt_time = unique(data_not_PH$time[data_not_PH$status == 1])
+  nb_evt_time = length(evt_time)
+  weights = matrix(runif(nb_evt_time*3), ncol=3)
+  multi_lr(data_not_PH, weights=weights)
 }

@@ -43,7 +43,9 @@
 #' @export
 #'
 #' @examples
-#' multi_ts(data_not_PH, method = "BH", eps = 0.1, nboot = 100)
+#'   # test with a quarter of the data frame data_not_PH
+#'   ind = c(1:100, 401:500, 801:900)
+#'   multi_ts(data_not_PH[ind,], method = "BH", eps = 0.1, nboot = 10)
 multi_ts = function(df, method = p.adjust.methods, eps = 0.1, nboot = 100){
   if (length(method) != 1){method = "bonferroni"}
   i = which(stats::p.adjust.methods == "bonferroni")
@@ -114,6 +116,14 @@ multi_ts = function(df, method = p.adjust.methods, eps = 0.1, nboot = 100){
 #'
 #' @param x An object of class `multi_ts` as returned by [multi_ts()];
 #' @param ... For compatibility with the `print` method, unused and to be ignored.
+#'
+#' @return None
+#' 
+#' @examples 
+#'   # test with a quarter of the data frame data_not_PH
+#'   ind = c(1:100, 401:500, 801:900)
+#'   x = multi_ts(data_not_PH[ind,], method = "BH", eps = 0.1, nboot = 10)
+#'   print(x)
 #'
 #' @export
 print.multi_ts = function(x, ...){

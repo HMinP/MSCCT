@@ -53,7 +53,7 @@ multi_lr(data_under_PH)
 ```
 
 ```{r}
-multi_lr(data_under_PH, weights=numeric(), test="fh", rho=1, gamma=0)
+multi_lr(data_under_PH, test="fh", rho=1, gamma=0)
 ```
 
 - The Restricted Mean Survival Test

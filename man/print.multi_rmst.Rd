@@ -11,6 +11,14 @@
 
 \item{...}{For compatibility with the \code{print} method, unused and to be ignored.}
 }
+\value{
+None
+}
 \description{
 Print method for the multiple test of RMST
+}
+\examples{
+  x = multi_rmst(data_under_PH, tau = 36, nboot = 300)
+  print(x)
+
 }

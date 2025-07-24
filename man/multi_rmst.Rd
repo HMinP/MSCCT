@@ -23,11 +23,11 @@ Default is the Holm correction. Unused if number of groups equals two.}
 \item{nboot}{Number of bootstrap samples;}
 }
 \value{
-an object of class \code{multi_rmst} containing :
+An object of class \code{multi_rmst} containing :
 \itemize{
+\item \code{rmst_mat} RMST estimation for each arm;
 \item \code{results} A matrix. Each row represents a comparison of two curves and contains the difference
 of RMST, its standard deviation, the p-value and the adjusted p-value;
-\item \code{rmst_mat} RMST estimation for each arm;
 \item \code{p} The p-value of the global test;
 \item \code{nb_tests} The number of performed tests;
 \item The parameters \code{tau}, \code{method} and \code{nboot}.
@@ -49,8 +49,8 @@ it compares each survival curve to every other curves and tests the global null
 hypothesis "all curves are equal" against the hypothesis "the curves are not all equal".
 }
 \examples{
-multi_rmst(data_under_PH, tau = 36)
-multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 1000)
+  multi_rmst(data_under_PH, tau = 36, nboot = 300)
+  multi_rmst(data_not_PH, tau = 36, method = "BH", nboot = 300)
 
 }
 \references{

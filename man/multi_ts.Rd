@@ -47,7 +47,9 @@ For multiple curves comparison, the two-stage test is a pairwise test.
 A two-stage test is performed for each pair of curves.
 }
 \examples{
-multi_ts(data_not_PH, method = "BH", eps = 0.1, nboot = 100)
+  # test with a quarter of the data frame data_not_PH
+  ind = c(1:100, 401:500, 801:900)
+  multi_ts(data_not_PH[ind,], method = "BH", eps = 0.1, nboot = 10)
 }
 \references{
 \itemize{
