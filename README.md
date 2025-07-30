@@ -14,11 +14,10 @@ particular when the survival curves cross each other.
 
 ## Installation
 
-You can install the development version of MSCCT from
-[GitHub](https://github.com/) with:
+You can install the package MSCCT from CRAN with:
 
 ``` r
-devtools::install_github("https://github.com/HMinP/MSCCT")
+install.packages("MSCCT")
 ```
 
 ## Example
@@ -75,17 +74,17 @@ multi_rmst(data_under_PH, tau=12, nboot=100, method="bonferroni")
 #> 
 #> RMST estimation for each arm 
 #>            rmst        sd
-#> arm 0 10.232101 0.1777291
-#> arm 1  9.380293 0.2147322
-#> arm 2  8.179610 0.2163973
+#> arm 0 10.232101 0.1846498
+#> arm 1  9.380293 0.1811703
+#> arm 2  8.179610 0.1930697
 #> 
 #> Pair-wise comparisons 
 #>             dRMST        sd            p   p adjusted
-#> 0 VS 1 -0.8518077 0.2787428 2.243925e-03 6.731774e-03
-#> 0 VS 2 -2.0524910 0.2800275 2.309264e-13 6.927792e-13
-#> 1 VS 2 -1.2006833 0.3048569 8.198752e-05 2.459625e-04
+#> 0 VS 1 -0.8518077 0.2586856 9.918430e-04 2.975529e-03
+#> 0 VS 2 -2.0524910 0.2671543 1.554312e-14 4.662937e-14
+#> 1 VS 2 -1.2006833 0.2647614 5.761334e-06 1.728400e-05
 #>  
-#> p=6.927792e-13
+#> p=4.662937e-14
 ```
 
 - The Two-stage test
@@ -104,9 +103,9 @@ multi_ts(data_under_PH, eps=0.1, nboot=100, method="BH")
 #> Correction : BH  
 #> 
 #>                  p1   p2            p        adj_p
-#> 0 VS 1 5.486672e-09 0.75 8.357007e-08 8.357007e-08
-#> 0 VS 2 0.000000e+00 0.05 3.774758e-15 1.132427e-14
-#> 1 VS 2 2.401913e-10 0.86 4.813040e-09 7.219560e-09
+#> 0 VS 1 5.486672e-09 0.68 7.613576e-08 7.613576e-08
+#> 0 VS 2 0.000000e+00 0.13 3.774758e-15 1.132427e-14
+#> 1 VS 2 2.401913e-10 0.94 5.240682e-09 7.861023e-09
 #>  
 #> p=1.132427e-14
 ```
